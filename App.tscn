@@ -1,11 +1,16 @@
-[gd_scene load_steps=4 format=3 uid="uid://ciqinuqqd6hm1"]
+[gd_scene load_steps=5 format=3 uid="uid://ciqinuqqd6hm1"]
 
 [ext_resource type="Script" path="res://App.cs" id="1_vlfg6"]
-[ext_resource type="PackedScene" uid="uid://f2kqji5cocju" path="res://GameUI.tscn" id="2_eoqha"]
+[ext_resource type="PackedScene" uid="uid://dm2ycgfcpxpct" path="res://GameUI.tscn" id="2_eoqha"]
 [ext_resource type="PackedScene" uid="uid://cxvaqesbktbec" path="res://Menus/SetupMenu.tscn" id="3_s4asw"]
+[ext_resource type="PackedScene" uid="uid://co8j8rfe4arfh" path="res://Menus/DebugHUD.tscn" id="4_cn2lr"]
 
 [node name="App" type="Node"]
 script = ExtResource("1_vlfg6")
 packedGame = ExtResource("2_eoqha")
 
 [node name="SetupMenu" parent="." instance=ExtResource("3_s4asw")]
+
+[node name="DebugHUD" parent="." instance=ExtResource("4_cn2lr")]
+offset_left = 488.0
+offset_right = 488.0

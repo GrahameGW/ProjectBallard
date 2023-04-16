@@ -213,6 +213,7 @@ namespace BallmontGame.Core
 
             var move = new MoveCommand(piece, piece.VisibleSquare, destination);
             game.VisiblePlayer.EnqueueCommand(move);
+            //game.VisiblePlayer.DispatchNextCommand();
         }
 
         private void OnVisiblePlayerChanged(Player player)
@@ -227,7 +228,6 @@ namespace BallmontGame.Core
                 // server
                 DisplayPieces(game.Board.Pieces);
             }
-
         }
     }
 }

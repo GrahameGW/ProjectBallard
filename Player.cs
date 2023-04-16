@@ -55,7 +55,7 @@ namespace BallmontGame.Core
         {
             var command = Commands.Pop();
             if (command == null) { return; }
-            command.Dispatch();
+            command.Dispatch(this);
             EmitSignal(SignalName.DispatchedCommand, command);
         }
     }

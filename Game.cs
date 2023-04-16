@@ -30,7 +30,6 @@ namespace BallmontGame.Core
             Opponent = CreateOpponent(userColor.InvertColor(), multiplayerGame);
             AddChild(User);
             AddChild(Opponent);
-
         }
 
         public void StartGame()
@@ -54,7 +53,7 @@ namespace BallmontGame.Core
                 new Player(color, this);  
         }
 
-        private void OnVisiblePlayerTogglePressed(int index)
+        public void ToggleVisiblePlayer(int index)
         {
             VisiblePlayer = index switch
             {

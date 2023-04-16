@@ -34,7 +34,7 @@ namespace BallmontGame.Core
                 player.AddedCommand += OnPlayerAddedCommand;
             }
             currentPlayer = player;
-
+            RefreshCardDisplay();
         }
 
         private void OnPlayerDispatchedCommand(Command command)
@@ -59,16 +59,8 @@ namespace BallmontGame.Core
 
         private void RefreshCardDisplay()
         {
-            foreach (var card in cardMap.Values)
-            {
-                card.QueueFree();
-            }
-            cardMap.Clear();
-            
-            if (currentPlayer == null)
-            {
-                return;
-            }
+            ClearCardDisplay();
+            if (currentPlayer == null) { return; }
 
             foreach (var command in currentPlayer.Commands)
             {
@@ -77,6 +69,15 @@ namespace BallmontGame.Core
 
             queueContainer.MoveChild(spacer, queueContainer.GetChildCount() - 1);
             spacer.CustomMinimumSize = new Vector2();
+        }
+
+        private void ClearCardDisplay()
+        {
+            foreach (var card in cardMap.Values)
+            {
+                card.QueueFree();
+            }
+            cardMap.Clear();
         }
     }
 }

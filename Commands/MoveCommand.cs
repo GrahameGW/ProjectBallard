@@ -15,11 +15,12 @@ namespace BallmontGame.Core
             End = end;
         }
 
-        public override void Dispatch()
+        public override void Dispatch(Player dispatcher)
         {
             GD.Print($"Dispatching move from {Start.Name} to {End.Name}");
             var actualPath = Piece.GetPath(Piece.Square, End);
             var displayPath = Piece.GetPath(Start, End);
+
             if (actualPath == null)
             {
                 GD.Print("Server path not possible");
@@ -27,6 +28,7 @@ namespace BallmontGame.Core
             else
             {
                 GD.Print("Starting travel for server piece");
+                Piece.Square = End;
             }
             if (displayPath == null)
             {
@@ -35,6 +37,7 @@ namespace BallmontGame.Core
             else
             {
                 GD.Print("Starting travel for display piece");
+                //dispatcher.PieceData[Piece] = End;
             }
         }
     }
