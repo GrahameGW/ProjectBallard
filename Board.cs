@@ -1,5 +1,6 @@
 ﻿using Godot;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace BallmontGame.Core
 {
@@ -19,12 +20,18 @@ namespace BallmontGame.Core
 
         private GridContainer squareGrid;
         private Vector2 squareSize;
+        private bool isInverted;
+
+        private Game game;
+
 
         [Signal]
         public delegate void BoardResetEventHandler();
+        [Signal]
+        public delegate void BoardDisplayChangedEventHandler();
 
 
-        public void Initialize(int rows, int cols)
+        public void Initialize(int rows, int cols, Game game)
         {
             // Top left to bottom right
             Rows = rows;
@@ -33,7 +40,7 @@ namespace BallmontGame.Core
             Squares = new Square[rows * cols];
 
             squareGrid = GetNode<GridContainer>("Board");
-            squareGrid.Columns = Rows;
+            squareGrid.Columns = Cols;
             var spacing = squareGrid.GetThemeConstant("h_separation");
             var width = Size.X - 2 * borderWidth - (Cols - 1) * spacing;
             var sqrWidth = width / Cols;
@@ -45,11 +52,14 @@ namespace BallmontGame.Core
                 {
                     var color = (ChessColor)(x + y & 1);
                     var square = packedSquare.Instantiate<Square>();
-                    square.Initialize(color, new Vector2I(x, y), this, sqrWidth);
-                    Squares[x + y * Cols] = square;
                     squareGrid.AddChild(square);
+                    square.Initialize(color, new Vector2I(x, y), squareSize, this);
+                    Squares[x + y * Cols] = square;
                 }
             }
+
+            this.game = game;
+            game.VisiblePlayerChanged += OnVisiblePlayerChanged;
         }
 
         public void SetUpBoardForChess()
@@ -59,6 +69,11 @@ namespace BallmontGame.Core
                 Pieces.Clear();
                 SetUpPiecesFromFen(DEFAULT_FEN);
                 EmitSignal(SignalName.BoardReset);
+
+                if (game.User.Color == ChessColor.Black)
+                {
+                    Invert();
+                }
             }
         }
 
@@ -81,7 +96,7 @@ namespace BallmontGame.Core
                 else
                 {
                     var piece = packedPiece.Instantiate<Piece>();
-                    piece.InitializeFromFenChar(c);
+                    piece.InitializeFromFenChar(c, this);
                     Squares[coord.X + coord.Y * Cols].Piece = piece;
                     Pieces.Add(piece);
                     coord.X += 1;
@@ -118,6 +133,101 @@ namespace BallmontGame.Core
             }
 
             return squares == 64 && rows == 8;
+        }
+
+        private static void DisplayPieces(Dictionary<Piece, Square> data)
+        {
+            foreach (var piece in data.Keys)
+            {
+                piece.SetTokenToSquare(data[piece]);
+            }
+        }
+        private static void DisplayPieces(List<Piece> pieces)
+        {
+            foreach (var piece in pieces)
+            {
+                piece.SetTokenToSquare(piece.Square);
+            }
+        }
+
+        public Square GetSquare(Vector2 globalMousePos)
+        {
+            var gridPos = squareGrid.GlobalPosition;
+            if (globalMousePos.X < gridPos.X || globalMousePos.Y < gridPos.Y
+                || globalMousePos.X > gridPos.X + squareGrid.Size.X
+                || globalMousePos.Y > gridPos.Y + squareGrid.Size.Y)
+            {
+                GD.Print($"{globalMousePos} is not on the chess board");
+                return null;
+            }
+
+            var boardCoords = new Vector2(globalMousePos.X - gridPos.X, globalMousePos.Y - gridPos.Y);
+            boardCoords /= squareSize;
+            var coords = new Vector2I(
+                Mathf.FloorToInt(boardCoords.X),
+                Mathf.FloorToInt(boardCoords.Y)
+                );
+            // get inverted coords if board is flipped
+            if (isInverted)
+            {
+                coords = new Vector2I(
+                    coords.X ^ (Cols - 1),
+                    coords.Y ^ (Rows - 1)
+                    );
+            }
+
+            return GetSquare(coords);
+        }
+        public Square GetSquare(Vector2I coordinates)
+        {
+            return Squares.FirstOrDefault(s => s.XY == coordinates);
+        }
+
+        public void Invert()
+        {
+            var boardGrid = GetNode<GridContainer>("Board");
+            var nodes = new Node[boardGrid.GetChildCount()];
+            var mask = nodes.Length - 1;
+            // sort list
+            for (int i = 0; i < nodes.Length; i++)
+            {
+                var sqr = boardGrid.GetChild(i);
+                nodes[i ^ mask] = sqr;
+            }
+            // reassign nodes to display correctly
+            for (int i = 0; i < nodes.Length; i++)
+            {
+                boardGrid.MoveChild(nodes[i], i);
+            }
+
+            isInverted = !isInverted;
+        }
+
+        public void RequestPieceMove(Piece piece, Square destination)
+        {
+            if (game.VisiblePlayer != game.User || piece.Color != game.VisiblePlayer.Color)
+            {
+                GD.Print("You don't control this piece. Move canceled");
+                return;
+            }
+
+            var move = new MoveCommand(piece, piece.VisibleSquare, destination);
+            game.VisiblePlayer.EnqueueCommand(move);
+        }
+
+        private void OnVisiblePlayerChanged(Player player)
+        {
+            if (player != null)
+            {
+                // players
+                DisplayPieces(player.PieceData);
+            }
+            else
+            {
+                // server
+                DisplayPieces(game.Board.Pieces);
+            }
+
         }
     }
 }

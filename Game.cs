@@ -9,24 +9,35 @@ namespace BallmontGame.Core
         public Board Board { get; private set; }
         public bool IsMultiplayer { get; private set; }
 
+        public Player VisiblePlayer { get; private set; }
+
+        [Signal]
+        public delegate void VisiblePlayerChangedEventHandler(Player player);
+
 
         public void Initialize(ChessColor userColor, bool multiplayerGame = false)
         {
             IsMultiplayer = multiplayerGame;
             Name = "ChessGame";
 
+            Board = GetNode<Board>("ChessBoard");
+            Board.Initialize(8, 8, this);
+
+            var commandUi = GetNode<CommandUI>("CommandUI");
+            commandUi.Initialize(this);
+
             User = CreateUser(userColor, multiplayerGame);
             Opponent = CreateOpponent(userColor.InvertColor(), multiplayerGame);
             AddChild(User);
             AddChild(Opponent);
 
-            Board = GetNode<Board>("ChessBoard");
-            Board.Initialize(8, 8);
         }
 
         public void StartGame()
         {
             Board.SetUpBoardForChess();
+            VisiblePlayer = User;
+            EmitSignal(SignalName.VisiblePlayerChanged, VisiblePlayer);
         }
 
         private Player CreateUser(ChessColor color, bool multiplayer)
@@ -41,6 +52,18 @@ namespace BallmontGame.Core
             return multiplayer ?
                 new Player(color, this, Multiplayer.GetPeers()[0]) :
                 new Player(color, this);  
+        }
+
+        private void OnVisiblePlayerTogglePressed(int index)
+        {
+            VisiblePlayer = index switch
+            {
+                2 => Opponent,
+                1 => User,
+                0 or _ => null
+            };
+
+            EmitSignal(SignalName.VisiblePlayerChanged, VisiblePlayer);
         }
     }
 }

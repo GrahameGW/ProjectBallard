@@ -23,15 +23,6 @@ namespace BallmontGame.Core
                 }
                 _piece = value;
                 value.Square = this;
-                if (value.GetParent() == null)
-                {
-                    AddChild(value);
-                }
-                else
-                {
-                    value.Reparent(this);
-                }
-                value.Position = GetCenter();
             }
         }
         private Piece _piece;
@@ -39,13 +30,13 @@ namespace BallmontGame.Core
         const int ASCII_LOWER_A = 97;
 
 
-        public void Initialize(ChessColor color, Vector2I xy, Board board, float width)
+        public void Initialize(ChessColor color, Vector2I xy, Vector2 size, Board board)
         {
             XY = xy;
             Board = board;
             Name = $"{(char)(ASCII_LOWER_A + xy.X)}{board.Rows - xy.Y}";
             Color = color == ChessColor.White ? lightColor : darkColor;
-            CustomMinimumSize = new Vector2(width, width);
+            CustomMinimumSize = size;
             MouseFilter = MouseFilterEnum.Ignore;
         }
 

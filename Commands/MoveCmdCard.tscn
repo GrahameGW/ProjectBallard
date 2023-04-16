@@ -1,0 +1,50 @@
+[gd_scene load_steps=5 format=3 uid="uid://bfmdcgfiks27l"]
+
+[ext_resource type="Texture2D" uid="uid://g35eacn1va47" path="res://assets/command_card/blue_panel.png" id="1_cfj04"]
+[ext_resource type="Script" path="res://Commands/MoveCommandCard.cs" id="2_4magc"]
+[ext_resource type="PackedScene" path="res://Piece/PieceSprite.tscn" id="4_pf3hv"]
+[ext_resource type="Texture2D" uid="uid://dqqvvkp0awdbp" path="res://assets/command_card/arrow.png" id="4_t0ucw"]
+
+[node name="MoveCmdCard" type="NinePatchRect"]
+custom_minimum_size = Vector2(300, 80)
+anchors_preset = -1
+anchor_right = 0.156
+anchor_bottom = 0.074
+offset_right = 0.47998
+offset_bottom = 0.0800018
+mouse_filter = 1
+texture = ExtResource("1_cfj04")
+patch_margin_left = 6
+patch_margin_top = 6
+patch_margin_right = 6
+patch_margin_bottom = 6
+script = ExtResource("2_4magc")
+
+[node name="PieceSprite" parent="." instance=ExtResource("4_pf3hv")]
+position = Vector2(40, 40)
+scale = Vector2(0.516667, 0.516667)
+
+[node name="Arrow" type="Sprite2D" parent="."]
+position = Vector2(187, 42)
+scale = Vector2(0.34, 0.34)
+texture = ExtResource("4_t0ucw")
+
+[node name="EndSquareLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 229.0
+offset_right = 285.0
+offset_bottom = 80.0
+theme_override_font_sizes/font_size = 36
+text = "h8"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="StartSquareLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 82.0
+offset_right = 138.0
+offset_bottom = 80.0
+theme_override_font_sizes/font_size = 36
+text = "h8"
+horizontal_alignment = 1
+vertical_alignment = 1

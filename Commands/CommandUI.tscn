@@ -1,0 +1,124 @@
+[gd_scene load_steps=9 format=3 uid="uid://bsi7ifspyrfol"]
+
+[ext_resource type="Script" path="res://Commands/CommandUI.cs" id="1_16eoe"]
+[ext_resource type="PackedScene" uid="uid://bfmdcgfiks27l" path="res://Commands/MoveCmdCard.tscn" id="2_r83vh"]
+[ext_resource type="Texture2D" uid="uid://b6pbxhdf0t442" path="res://assets/buttons/red_button_released.png" id="2_vhdh0"]
+[ext_resource type="Texture2D" uid="uid://6ph8otnv5iyh" path="res://assets/buttons/red_button_pressed.png" id="3_70x5x"]
+[ext_resource type="Texture2D" uid="uid://bsf5ir4giutjp" path="res://assets/buttons/red_button_hover.png" id="4_rdqgc"]
+[ext_resource type="Texture2D" uid="uid://cra427tqgmw4r" path="res://assets/buttons/green_button_released.png" id="5_x8fv3"]
+[ext_resource type="Texture2D" uid="uid://duknsbpw5wrwt" path="res://assets/buttons/green_button_pressed.png" id="6_fy8qh"]
+[ext_resource type="Texture2D" uid="uid://mt2ov6vu7hko" path="res://assets/buttons/green_button_hover.png" id="7_nkgpf"]
+
+[node name="CommandUI" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+size_flags_vertical = 0
+mouse_filter = 2
+script = ExtResource("1_16eoe")
+moveCardPackedScene = ExtResource("2_r83vh")
+
+[node name="QueuePanel" type="Panel" parent="."]
+layout_mode = 0
+offset_right = 440.0
+offset_bottom = 999.0
+mouse_filter = 1
+
+[node name="Queue" type="VBoxContainer" parent="QueuePanel"]
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 0
+offset_left = 25.0
+offset_top = 20.0
+offset_right = 417.0
+offset_bottom = 832.0
+mouse_filter = 0
+theme_override_constants/separation = 10
+
+[node name="Spacer" type="Control" parent="QueuePanel/Queue"]
+layout_mode = 2
+
+[node name="DelayButton" type="TextureButton" parent="QueuePanel"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = -65.0
+offset_right = 206.0
+offset_bottom = -16.0
+grow_vertical = 0
+texture_normal = ExtResource("2_vhdh0")
+texture_pressed = ExtResource("3_70x5x")
+texture_hover = ExtResource("4_rdqgc")
+
+[node name="Label" type="Label" parent="QueuePanel/DelayButton"]
+layout_mode = 0
+offset_right = 190.0
+offset_bottom = 43.0
+theme_override_font_sizes/font_size = 23
+text = "Delay"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ReconButton" type="TextureButton" parent="QueuePanel"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 228.0
+offset_top = -66.0
+offset_right = 418.0
+offset_bottom = -17.0
+grow_vertical = 0
+texture_normal = ExtResource("5_x8fv3")
+texture_pressed = ExtResource("6_fy8qh")
+texture_hover = ExtResource("7_nkgpf")
+
+[node name="Label" type="Label" parent="QueuePanel/ReconButton"]
+layout_mode = 0
+offset_right = 190.0
+offset_bottom = 43.0
+theme_override_font_sizes/font_size = 23
+text = "Get Info"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="DispatchTimerLabel" type="Label" parent="QueuePanel"]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 856.0
+offset_right = 216.0
+offset_bottom = 920.0
+theme_override_font_sizes/font_size = 24
+text = "Next Dispatch:"
+vertical_alignment = 1
+
+[node name="DispatchTimerDisplay" type="Label" parent="QueuePanel"]
+layout_mode = 0
+offset_left = 232.0
+offset_top = 856.0
+offset_right = 384.0
+offset_bottom = 912.0
+theme_override_font_sizes/font_size = 36
+text = "10 sec"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="DispatchPanel" type="Panel" parent="."]
+layout_mode = 0
+offset_left = 451.0
+offset_top = 333.0
+offset_right = 863.0
+offset_bottom = 616.0
+
+[node name="CurrentDispatches" type="VBoxContainer" parent="DispatchPanel"]
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+offset_left = 10.0
+offset_top = 11.0
+offset_right = 402.0
+offset_bottom = 271.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+theme_override_constants/separation = 10
+alignment = 2
