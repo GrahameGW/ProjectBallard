@@ -1,0 +1,8 @@
+[gd_resource type="AtlasTexture" load_steps=2 format=3]
+
+[ext_resource type="Texture2D" uid="uid://b42yibecj7uw6" path="res://assets/chess_pieces.png" id="1_vk7lh"]
+
+[resource]
+atlas = ExtResource("1_vk7lh")
+region = Rect2(0, 0, 720, 240)
+filter_clip = true

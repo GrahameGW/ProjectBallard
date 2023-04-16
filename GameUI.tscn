@@ -1,0 +1,50 @@
+[gd_scene load_steps=5 format=3 uid="uid://f2kqji5cocju"]
+
+[ext_resource type="Script" path="res://Game.cs" id="1_hbcel"]
+[ext_resource type="Script" path="res://Board.cs" id="2_vwy7x"]
+[ext_resource type="PackedScene" uid="uid://b2v6ah3uvdhac" path="res://SquareUI.tscn" id="3_e0xr2"]
+[ext_resource type="PackedScene" uid="uid://bd2iwqlye25bc" path="res://PieceUI.tscn" id="4_lava4"]
+
+[node name="GameUI" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_hbcel")
+
+[node name="ChessBoard" type="AspectRatioContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -43.0
+offset_top = -468.0
+offset_right = 917.0
+offset_bottom = 492.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_filter = 2
+script = ExtResource("2_vwy7x")
+packedSquare = ExtResource("3_e0xr2")
+packedPiece = ExtResource("4_lava4")
+
+[node name="Background" type="ColorRect" parent="ChessBoard"]
+layout_mode = 2
+mouse_filter = 2
+color = Color(0.235294, 0.027451, 0.247059, 1)
+
+[node name="Board" type="GridContainer" parent="ChessBoard"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_filter = 2
+theme_override_constants/h_separation = 4
+theme_override_constants/v_separation = 4
+columns = 8

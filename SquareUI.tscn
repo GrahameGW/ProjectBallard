@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://b2v6ah3uvdhac"]
+
+[ext_resource type="Script" path="res://Square.cs" id="1_nu4px"]
+
+[node name="Square" type="ColorRect"]
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_nu4px")
+darkColor = Color(0.854902, 0.709804, 0.988235, 1)
+lightColor = Color(0.968627, 0.937255, 1, 1)

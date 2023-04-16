@@ -1,0 +1,67 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://Menus/pause_menu.gd" id="1_05f7o"]
+[ext_resource type="Texture2D" uid="uid://dp4cm32us3bet" path="res://assets/buttons/blue_button_released.png" id="1_dt2tg"]
+[ext_resource type="Texture2D" uid="uid://5ufbq6y3brao" path="res://assets/buttons/blue_button_pressed.png" id="2_cdo62"]
+[ext_resource type="Texture2D" uid="uid://cn0uw7x1kju61" path="res://assets/buttons/blue_button_hover.png" id="3_73o4k"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jrhub"]
+bg_color = Color(0.470588, 0.164706, 0.607843, 1)
+
+[node name="PauseMenu" type="CanvasLayer"]
+script = ExtResource("1_05f7o")
+
+[node name="Background" type="PanelContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_jrhub")
+
+[node name="ButtonsContainer" type="VBoxContainer" parent="."]
+offset_left = 865.0
+offset_top = 481.0
+offset_right = 1055.0
+offset_bottom = 599.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="NewGameButton" type="TextureButton" parent="ButtonsContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture_normal = ExtResource("1_dt2tg")
+texture_pressed = ExtResource("2_cdo62")
+texture_hover = ExtResource("3_73o4k")
+
+[node name="Label" type="Label" parent="ButtonsContainer/NewGameButton"]
+layout_mode = 0
+offset_right = 189.0
+offset_bottom = 41.0
+theme_override_font_sizes/font_size = 24
+text = "New Game"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="QuitGameButton" type="TextureButton" parent="ButtonsContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture_normal = ExtResource("1_dt2tg")
+texture_pressed = ExtResource("2_cdo62")
+texture_hover = ExtResource("3_73o4k")
+
+[node name="Label" type="Label" parent="ButtonsContainer/QuitGameButton"]
+layout_mode = 0
+offset_right = 189.0
+offset_bottom = 41.0
+theme_override_font_sizes/font_size = 24
+text = "Quit Game"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[connection signal="pressed" from="ButtonsContainer/NewGameButton" to="." method="_on_new_game_button_pressed"]
+[connection signal="pressed" from="ButtonsContainer/QuitGameButton" to="." method="_on_quit_game_button_pressed"]

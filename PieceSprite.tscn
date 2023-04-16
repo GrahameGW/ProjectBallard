@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://bylh2tyh001n5"]
+
+[ext_resource type="Texture2D" path="res://assets/piece_atlas.tres" id="1_t2q2w"]
+[ext_resource type="Script" path="res://PieceSprite.cs" id="2_shg58"]
+
+[node name="PieceSprite" type="Sprite2D"]
+texture = ExtResource("1_t2q2w")
+region_enabled = true
+region_rect = Rect2(120, 0, 120, 120)
+script = ExtResource("2_shg58")

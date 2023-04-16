@@ -1,0 +1,11 @@
+[gd_scene load_steps=4 format=3 uid="uid://ciqinuqqd6hm1"]
+
+[ext_resource type="Script" path="res://App.cs" id="1_vlfg6"]
+[ext_resource type="PackedScene" uid="uid://f2kqji5cocju" path="res://GameUI.tscn" id="2_eoqha"]
+[ext_resource type="PackedScene" uid="uid://cxvaqesbktbec" path="res://Menus/SetupMenu.tscn" id="3_s4asw"]
+
+[node name="App" type="Node"]
+script = ExtResource("1_vlfg6")
+packedGame = ExtResource("2_eoqha")
+
+[node name="SetupMenu" parent="." instance=ExtResource("3_s4asw")]
