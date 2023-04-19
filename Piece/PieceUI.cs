@@ -4,20 +4,14 @@ namespace BallmontGame.Core
 {
     public partial class PieceUI : Area2D
     {
+        public TokenOwner OwnedBy { get; private set; }
         public Piece Piece { get; private set; }
         public Square Square {
             get => _square;
             set
             {
-                if (_square != null)
-                {
-                    _square.ItemRectChanged -= OnSquareRectChanged;
-                }
+                Piece.Board.UpdateTokenPosition(this, _square, value);
                 _square = value;
-                if (_square != null)
-                {
-                    _square.ItemRectChanged += OnSquareRectChanged;
-                }
             }
         }
 
@@ -27,13 +21,14 @@ namespace BallmontGame.Core
         private PieceSprite sprite;
         private bool playerControlled;
         private bool isHeld;
-        private Square _square;
+        private Square _square = null;
 
 
-        public void Initialize(Piece piece)
+        public void Initialize(Piece piece, TokenOwner owner)
         {
             Piece = piece;
             Square = piece.Square;
+            OwnedBy = owner;
             sprite = GetNode<PieceSprite>("PieceSprite");
             sprite.Initialize(piece);
         }
@@ -53,7 +48,7 @@ namespace BallmontGame.Core
                 GlobalPosition = Square.GetGlobalCenter();
 
                 var destination = Square.Board.GetSquare(GetGlobalMousePosition());
-                Square.Board.RequestPieceMove(Piece, destination);
+                Square.Board.RequestPieceMove(Piece, Square, destination);
             }
         }
 
@@ -69,5 +64,12 @@ namespace BallmontGame.Core
         {
             GlobalPosition = Square.GetGlobalCenter();
         }
+    }
+
+    public enum TokenOwner
+    {
+        Server,
+        User,
+        Opponent
     }
 }

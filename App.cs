@@ -25,7 +25,9 @@ namespace BallmontGame.Core
             }
 
             GetNode("DebugHUD").Call("show");
-            GetNode("DebugHUD/Visibilty").Call("initialize", gameInstance);
+            GetNode("DebugHUD/Visibility").Call("initialize", gameInstance);
+            GetNode("DebugHUD/UserOppControl").Call("initialize", gameInstance);
+
             gameInstance.StartGame();
         }
     }

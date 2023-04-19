@@ -4,6 +4,16 @@ namespace BallmontGame.Core
 {
     public abstract partial class Command : Node
     {
-        public abstract void Dispatch(Player dispatcher);
+        protected bool stopExecution = false;
+        
+        public abstract void Dispatch();
+        public virtual void Cancel()
+        {
+            stopExecution = true;
+            QueueFree();
+        }
+
+        [Signal]
+        public delegate void CommandExecutionCompletedEventHandler();
     }
 }

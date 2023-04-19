@@ -12,20 +12,7 @@ namespace BallmontGame.Core
         public Board Board { get; private set; }
         public Vector2I XY { get; private set; }
         
-        public Piece Piece 
-        {
-            get => _piece;
-            set { 
-                if (_piece != null)
-                {
-                    _piece.Square = null;
-                    GD.PushWarning($"{value.Name} pushed {_piece.Name} out from {Name}");
-                }
-                _piece = value;
-                value.Square = this;
-            }
-        }
-        private Piece _piece;
+        public Piece Piece { get; set; }
 
         const int ASCII_LOWER_A = 97;
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System;
 
+
 namespace BallmontGame.Core
 {
     public partial class Player : Node
@@ -55,7 +56,7 @@ namespace BallmontGame.Core
         {
             var command = Commands.Pop();
             if (command == null) { return; }
-            command.Dispatch(this);
+            command.Dispatch();
             EmitSignal(SignalName.DispatchedCommand, command);
         }
     }

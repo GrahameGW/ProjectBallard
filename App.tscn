@@ -12,5 +12,6 @@ packedGame = ExtResource("2_eoqha")
 [node name="SetupMenu" parent="." instance=ExtResource("3_s4asw")]
 
 [node name="DebugHUD" parent="." instance=ExtResource("4_cn2lr")]
+visible = false
 offset_left = 488.0
 offset_right = 488.0

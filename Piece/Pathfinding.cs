@@ -144,7 +144,7 @@ namespace BallmontGame.Core
             var path = includeStart ? new List<Square> { start } : new List<Square>();
 
             // Double jump on first move
-            if (Mathf.Abs(end.XY.Y - start.XY.Y) > 2)
+            if (Mathf.Abs(end.XY.Y - start.XY.Y) >= 2)
             {
                 if (color == ChessColor.White && start.XY.Y == 6 && end.XY.Y == 4)
                 {

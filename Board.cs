@@ -12,6 +12,7 @@ namespace BallmontGame.Core
         
         public Square[] Squares { get; private set; }
         public List<Piece> Pieces { get; private set; }
+        
         public int Rows { get; private set; }
         public int Cols { get; private set; } 
 
@@ -23,12 +24,14 @@ namespace BallmontGame.Core
         private bool isInverted;
 
         private Game game;
-
+        private readonly Dictionary<Square, List<PieceUI>> squareTokenMap = new();
 
         [Signal]
         public delegate void BoardResetEventHandler();
         [Signal]
         public delegate void BoardDisplayChangedEventHandler();
+        [Signal]
+        public delegate void PieceCapturedEventHandler(Piece captive, Piece captor);
 
 
         public void Initialize(int rows, int cols, Game game)
@@ -62,8 +65,11 @@ namespace BallmontGame.Core
             game.VisiblePlayerChanged += OnVisiblePlayerChanged;
         }
 
-        public void SetUpBoardForChess()
+        public async void SetUpBoardForChess()
         {
+            // cheat a frame to ensure the board is properly configured
+            await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
+
             if (CheckValidFen(DEFAULT_FEN))
             {
                 Pieces.Clear();
@@ -97,7 +103,7 @@ namespace BallmontGame.Core
                 {
                     var piece = packedPiece.Instantiate<Piece>();
                     piece.InitializeFromFenChar(c, this);
-                    Squares[coord.X + coord.Y * Cols].Piece = piece;
+                    piece.SetAllToSquare(Squares[coord.X + coord.Y * Cols]);
                     Pieces.Add(piece);
                     coord.X += 1;
                 }
@@ -133,21 +139,6 @@ namespace BallmontGame.Core
             }
 
             return squares == 64 && rows == 8;
-        }
-
-        private static void DisplayPieces(Dictionary<Piece, Square> data)
-        {
-            foreach (var piece in data.Keys)
-            {
-                piece.SetTokenToSquare(data[piece]);
-            }
-        }
-        private static void DisplayPieces(List<Piece> pieces)
-        {
-            foreach (var piece in pieces)
-            {
-                piece.SetTokenToSquare(piece.Square);
-            }
         }
 
         public Square GetSquare(Vector2 globalMousePos)
@@ -203,31 +194,106 @@ namespace BallmontGame.Core
             isInverted = !isInverted;
         }
 
-        public void RequestPieceMove(Piece piece, Square destination)
+        public void RequestPieceMove(Piece piece, Square start, Square destination)
         {
-            if (game.VisiblePlayer != game.User || piece.Color != game.VisiblePlayer.Color)
+            if (piece.Color != game.User.Color)
             {
                 GD.Print("You don't control this piece. Move canceled");
                 return;
             }
 
-            var move = new MoveCommand(piece, piece.VisibleSquare, destination);
-            game.VisiblePlayer.EnqueueCommand(move);
-            //game.VisiblePlayer.DispatchNextCommand();
+            var move = new MoveCommand(piece, start, destination);
+            game.User.EnqueueCommand(move);
+            game.User.DispatchNextCommand();
         }
-
+        public void CapturePiece(Piece captive, Piece captor)
+        {
+            EmitSignal(SignalName.PieceCaptured, captive, captor);
+            GD.Print($"{captive.Name} was captured by {captor.Name}");
+            Pieces.Remove(captive);
+            RemoveSquareTokens(captive);
+            captor.SetAllToSquare(captive.Square);
+        }
         private void OnVisiblePlayerChanged(Player player)
         {
-            if (player != null)
+            if (player == game.User)
             {
                 // players
-                DisplayPieces(player.PieceData);
+                ShowPlayerPieces();
+            }
+            else if (player == game.Opponent)
+            {
+                ShowOpponentPieces();
             }
             else
             {
-                // server
-                DisplayPieces(game.Board.Pieces);
+                ShowActualPieces();
             }
+        }
+
+        private void ShowPlayerPieces()
+        {
+            for (int i = 0; i < Pieces.Count; i++)
+            {
+                Pieces[i].ShowUserToken();
+            }
+        }
+        private void ShowOpponentPieces()
+        {
+            for (int i = 0; i < Pieces.Count; i++)
+            {
+                Pieces[i].ShowOppToken();
+            }
+        }
+        private void ShowActualPieces()
+        {
+            for (int i = 0; i < Pieces.Count; i++)
+            {
+                Pieces[i].ShowServerToken();
+            }
+        }
+
+        public PieceUI GetTokenInSquare(Square square, TokenOwner tokenType)
+        {
+            if (squareTokenMap.ContainsKey(square))
+            {
+                foreach (var token in squareTokenMap[square])
+                {
+                    if (tokenType == token.OwnedBy)
+                    {
+                        return token;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        public void UpdateTokenPosition(PieceUI token, Square previous, Square updated)
+        {
+            if (previous != null && squareTokenMap.ContainsKey(previous))
+            {
+                squareTokenMap[previous].Remove(token);
+            }
+            if (updated == null)
+            {
+                return;
+            }
+            if (!squareTokenMap.ContainsKey(updated))
+            {
+                squareTokenMap[updated] = new List<PieceUI> { token };
+            }
+            else
+            {
+                squareTokenMap[updated].Add(token);
+            }
+        }
+
+        private void RemoveSquareTokens(Piece piece)
+        {
+            squareTokenMap[piece.ServerToken.Square].Remove(piece.ServerToken);
+            squareTokenMap[piece.UserToken.Square].Remove(piece.UserToken);
+            squareTokenMap[piece.OppToken.Square].Remove(piece.OppToken);
         }
     }
 }

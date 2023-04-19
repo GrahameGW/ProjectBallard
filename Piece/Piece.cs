@@ -8,11 +8,22 @@ namespace BallmontGame.Core
         public ChessColor Color { get; private set; }
         public ChessPiece Type { get; private set; }
 
-        public Square Square { get; set; }
-        public Square VisibleSquare
+        public Square Square
         {
-            get => ServerToken.Square;
+            get => _square;
+            set
+            {
+                if (_square != null)
+                {
+                    _square.Piece = null;
+                }
+
+                _square = value;
+                value.Piece = this;
+                ServerToken.Square = value; // server token matches actual
+            }
         }
+        private Square _square;
 
         public PieceUI ServerToken { get; private set; }
         public PieceUI UserToken { get; private set; }
@@ -20,10 +31,13 @@ namespace BallmontGame.Core
 
         public const float MOVE_SPEED = 2f;
 
-        private Board board;
+        public Board Board { get; private set; }
 
         public void InitializeFromFenChar(char c, Board board)
         {
+            this.Board = board;
+            board.AddChild(this);
+
             Color = char.IsUpper(c) ? ChessColor.White : ChessColor.Black;
             Type = char.ToUpper(c) switch
             {
@@ -36,21 +50,12 @@ namespace BallmontGame.Core
             };
             
             ServerToken = GetNode<PieceUI>("ServerToken");
-            // UserToken = GetNode<PieceUI>("UserToken");
-            // OppToken = GetNode<PieceUI>("OppToken");
+            UserToken = GetNode<PieceUI>("UserToken");
+            OppToken = GetNode<PieceUI>("OppToken");
 
-            ServerToken.Initialize(this);
-            // UserToken.Initialize(this);
-            // OppToken.Initialize(this);
-
-            this.board = board;
-            board.AddChild(this);
-        }
-
-        public void SetTokenToSquare(Square square)
-        {
-            ServerToken.Square = square;
-            ServerToken.GlobalPosition = square.GetGlobalCenter();
+            ServerToken.Initialize(this, TokenOwner.Server);
+            UserToken.Initialize(this, TokenOwner.User);
+            OppToken.Initialize(this, TokenOwner.Opponent);
         }
 
         public List<Square> GetPath(Square start, Square end, bool includeStart = false)
@@ -65,6 +70,58 @@ namespace BallmontGame.Core
                 ChessPiece.Pawn => Pathfinding.GetPathPawn(start, end, Color, includeStart),
                 _ => throw new System.ArgumentException("Invalid chess piece passed to path")
             };
+        }
+
+        public void Capture(Piece capturedBy)
+        {
+            Board.CapturePiece(this, capturedBy);
+            GD.Print("Piece captured!");
+            QueueFree();
+        }
+
+        public void ShowUserToken()
+        {
+            ServerToken.Hide();
+            OppToken.Hide();
+            UserToken.Show();
+        }
+        public void ShowServerToken()
+        {
+            UserToken.Hide();
+            OppToken.Hide();
+            ServerToken.Show();
+        }
+        public void ShowOppToken()
+        {
+            ServerToken.Hide();
+            UserToken.Hide();
+            OppToken.Show();
+        }
+
+        public void SetAllToSquare(Square square, bool updatePosition = true)
+        {
+            UserToken.Square = OppToken.Square = square;
+            Square = square;
+            if (updatePosition)
+            {
+                ServerToken.GlobalPosition = UserToken.GlobalPosition
+                    = OppToken.GlobalPosition = square.GetGlobalCenter();
+            }
+        }
+
+        public PieceUI GetToken(TokenOwner owner)
+        {
+            return owner switch
+            {
+                TokenOwner.User => UserToken,
+                TokenOwner.Opponent => OppToken,
+                TokenOwner.Server or _ => ServerToken
+            };
+        }
+
+        public void SwapUserOppTokens()
+        {
+            (UserToken, OppToken) = (OppToken, UserToken);
         }
     }
 

@@ -1,23 +1,25 @@
-[gd_scene load_steps=2 format=3 uid="uid://co8j8rfe4arfh"]
+[gd_scene load_steps=3 format=3 uid="uid://co8j8rfe4arfh"]
 
 [ext_resource type="Script" path="res://Menus/visible_debug.gd" id="1_v0aco"]
+[ext_resource type="Script" path="res://Menus/user_control_debug.gd" id="2_em24d"]
 
 [node name="DebugHUD" type="Control"]
 layout_mode = 3
 anchors_preset = 0
 
-[node name="Visibilty" type="VBoxContainer" parent="."]
+[node name="Visibility" type="VBoxContainer" parent="."]
+layout_mode = 0
 offset_left = 9.0
 offset_top = 9.0
 offset_right = 131.0
 offset_bottom = 70.0
 script = ExtResource("1_v0aco")
 
-[node name="ViewLabel" type="Label" parent="Visibilty"]
+[node name="ViewLabel" type="Label" parent="Visibility"]
 layout_mode = 2
 text = "Visible"
 
-[node name="ViewToggle" type="OptionButton" parent="Visibilty"]
+[node name="ViewToggle" type="OptionButton" parent="Visibility"]
 layout_mode = 2
 item_count = 3
 selected = 1
@@ -28,4 +30,28 @@ popup/item_1/id = 1
 popup/item_2/text = "Opponent"
 popup/item_2/id = 2
 
-[connection signal="item_selected" from="Visibilty/ViewToggle" to="Visibilty" method="_on_view_toggle_item_selected"]
+[node name="UserOppControl" type="CheckButton" parent="."]
+layout_mode = 0
+offset_left = 192.0
+offset_top = 9.0
+offset_right = 236.0
+offset_bottom = 33.0
+script = ExtResource("2_em24d")
+
+[node name="UserLabel" type="Label" parent="UserOppControl"]
+layout_mode = 0
+offset_left = -39.0
+offset_right = 1.0
+offset_bottom = 26.0
+text = "User
+"
+
+[node name="OpponentLabel" type="Label" parent="UserOppControl"]
+layout_mode = 0
+offset_left = 44.0
+offset_right = 123.0
+offset_bottom = 26.0
+text = "Opponent"
+
+[connection signal="item_selected" from="Visibility/ViewToggle" to="Visibility" method="_on_view_toggle_item_selected"]
+[connection signal="toggled" from="UserOppControl" to="UserOppControl" method="_on_toggled"]

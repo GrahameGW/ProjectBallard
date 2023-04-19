@@ -15,6 +15,7 @@ namespace BallmontGame.Core
             GetNode<Label>("EndSquareLabel").Text = moveCmd.End.Name;
             GetNode<PieceSprite>("PieceSprite").Initialize(moveCmd.Piece);
             this.command = moveCmd;
+            moveCmd.CommandExecutionCompleted += OnCommandExecutionComplete;
         }
     }
 }

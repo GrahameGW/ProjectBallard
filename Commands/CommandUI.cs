@@ -1,6 +1,7 @@
 ﻿using Godot;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace BallmontGame.Core
 {
@@ -40,7 +41,6 @@ namespace BallmontGame.Core
         private void OnPlayerDispatchedCommand(Command command)
         {
             // tween into process area
-            var card = cardMap[command];
             cardMap.Remove(command);
         }
 
@@ -78,6 +78,18 @@ namespace BallmontGame.Core
                 card.QueueFree();
             }
             cardMap.Clear();
+        }
+
+        private void OnPieceCaptured(Piece captured, Piece captor)
+        {
+            foreach (var cmd in cardMap.Keys.Cast<MoveCommand>())
+            {
+                if (cmd == null) { continue; }
+                var card = cardMap[cmd];
+                card.QueueFree();
+                cardMap.Remove(cmd);
+                cmd.Cancel();
+            }
         }
     }
 }

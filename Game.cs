@@ -13,6 +13,8 @@ namespace BallmontGame.Core
 
         [Signal]
         public delegate void VisiblePlayerChangedEventHandler(Player player);
+        [Signal]
+        public delegate void UserControlSwappedEventHandler();
 
 
         public void Initialize(ChessColor userColor, bool multiplayerGame = false)
@@ -35,8 +37,7 @@ namespace BallmontGame.Core
         public void StartGame()
         {
             Board.SetUpBoardForChess();
-            VisiblePlayer = User;
-            EmitSignal(SignalName.VisiblePlayerChanged, VisiblePlayer);
+            ToggleVisiblePlayer(1);
         }
 
         private Player CreateUser(ChessColor color, bool multiplayer)
@@ -53,6 +54,7 @@ namespace BallmontGame.Core
                 new Player(color, this);  
         }
 
+        #region Debug
         public void ToggleVisiblePlayer(int index)
         {
             VisiblePlayer = index switch
@@ -64,5 +66,19 @@ namespace BallmontGame.Core
 
             EmitSignal(SignalName.VisiblePlayerChanged, VisiblePlayer);
         }
+
+        public void SwapPlayer()
+        {
+            (Opponent, User) = (User, Opponent);
+        }
+
+        public void SwapPieceTokens()
+        {
+            foreach (var piece in Board.Pieces)
+            {
+                piece.SwapUserOppTokens();
+            }
+        }
+        #endregion
     }
 }
