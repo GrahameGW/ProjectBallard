@@ -24,6 +24,7 @@ namespace BallmontGame.Core
             Name = $"{(char)(ASCII_LOWER_A + xy.X)}{board.Rows - xy.Y}";
             Color = color == ChessColor.White ? lightColor : darkColor;
             CustomMinimumSize = size;
+            Size = size;
             MouseFilter = MouseFilterEnum.Ignore;
         }
 

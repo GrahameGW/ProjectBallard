@@ -22,9 +22,6 @@ namespace BallmontGame.Core
             IsMultiplayer = multiplayerGame;
             Name = "ChessGame";
 
-            Board = GetNode<Board>("ChessBoard");
-            Board.Initialize(8, 8, this);
-
             var commandUi = GetNode<CommandUI>("CommandUI");
             commandUi.Initialize(this);
 
@@ -32,12 +29,21 @@ namespace BallmontGame.Core
             Opponent = CreateOpponent(userColor.InvertColor(), multiplayerGame);
             AddChild(User);
             AddChild(Opponent);
+
+            Board = GetNode<Board>("ChessBoard");
+            Board.Initialize(8, 8, this);
+            Board.PieceCaptured += OnPieceCaptured;
         }
 
         public void StartGame()
         {
+            // invert first so initialization is smoother
+            if (User.Color == ChessColor.Black)
+            {
+                Board.Invert();
+            }
             Board.SetUpBoardForChess();
-            ToggleVisiblePlayer(1);
+            ToggleVisiblePlayer(User);
         }
 
         private Player CreateUser(ChessColor color, bool multiplayer)
@@ -54,7 +60,13 @@ namespace BallmontGame.Core
                 new Player(color, this);  
         }
 
-        #region Debug
+        private void OnPieceCaptured(Piece captive, Piece captor)
+        {
+            if (captive.Type == ChessPiece.King)
+            {
+                GD.Print($"Game over! {captor.Color} wins!");
+            }
+        }
         public void ToggleVisiblePlayer(int index)
         {
             VisiblePlayer = index switch
@@ -66,6 +78,14 @@ namespace BallmontGame.Core
 
             EmitSignal(SignalName.VisiblePlayerChanged, VisiblePlayer);
         }
+        private void ToggleVisiblePlayer(Player player)
+        {
+            VisiblePlayer = player;
+            EmitSignal(SignalName.VisiblePlayerChanged, VisiblePlayer);
+        }
+
+        #region Debug
+
 
         public void SwapPlayer()
         {

@@ -5,6 +5,12 @@
       "executablePath": "C:\\Users\\wattg\\Desktop\\Godot_v4.0.1-stable_mono_win64\\Godot_v4.0.1-stable_mono_win64.exe",
       "workingDirectory": "C:\\code\\Ballmont",
       "nativeDebugging": true
+    },
+    "Ballmont Multi": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Users\\wattg\\Desktop\\Godot_v4.0.1-stable_mono_win64\\Godot_v4.0.1-stable_mono_win64.exe",
+      "commandLineArgs": "C:\\Users\\wattg\\Desktop\\Godot_v4.0.1-stable_mono_win64\\Godot_v4.0.1-stable_mono_win64.exe --path C:/code/ballmont",
+      "workingDirectory": "C:\\code\\Ballmont"
     }
   }
 }

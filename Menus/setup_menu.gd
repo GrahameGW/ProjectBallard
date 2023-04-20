@@ -20,7 +20,7 @@ func _on_start_game_pressed_singleplayer():
 
 func _on_start_game_pressed_multiplayer():
 	var server_color = mp_tab.get_node("ColorSelect/ColorChoice").selected
-	app.start_multiplayer_game.rpc(server_color)
+	app.rpc("StartMultiplayerGame", server_color)
 
 
 func _on_host_server_pressed():

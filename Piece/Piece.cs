@@ -33,10 +33,11 @@ namespace BallmontGame.Core
 
         public Board Board { get; private set; }
 
-        public void InitializeFromFenChar(char c, Board board)
+        public void InitializeFromFenChar(char c, Square square)
         {
-            this.Board = board;
-            board.AddChild(this);
+            // do this before so initialization works right
+            Board = square.Board;
+            Board.AddChild(this);
 
             Color = char.IsUpper(c) ? ChessColor.White : ChessColor.Black;
             Type = char.ToUpper(c) switch
@@ -48,7 +49,7 @@ namespace BallmontGame.Core
                 'Q' => ChessPiece.Queen,
                 'K' or _ => ChessPiece.King,
             };
-            
+
             ServerToken = GetNode<PieceUI>("ServerToken");
             UserToken = GetNode<PieceUI>("UserToken");
             OppToken = GetNode<PieceUI>("OppToken");
@@ -56,6 +57,9 @@ namespace BallmontGame.Core
             ServerToken.Initialize(this, TokenOwner.Server);
             UserToken.Initialize(this, TokenOwner.User);
             OppToken.Initialize(this, TokenOwner.Opponent);
+
+            // do this afterwards so initialization works right
+            Square = square;
         }
 
         public List<Square> GetPath(Square start, Square end, bool includeStart = false)

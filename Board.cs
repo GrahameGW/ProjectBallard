@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace BallmontGame.Core
 {
-    public partial class Board : Control
+    public partial class Board : AspectRatioContainer
     {
         [Export] PackedScene packedSquare;
         [Export] PackedScene packedPiece;
@@ -56,6 +56,7 @@ namespace BallmontGame.Core
                     var color = (ChessColor)(x + y & 1);
                     var square = packedSquare.Instantiate<Square>();
                     squareGrid.AddChild(square);
+                    square.Position = new Vector2(x, y) * (sqrWidth + spacing);
                     square.Initialize(color, new Vector2I(x, y), squareSize, this);
                     Squares[x + y * Cols] = square;
                 }
@@ -65,21 +66,15 @@ namespace BallmontGame.Core
             game.VisiblePlayerChanged += OnVisiblePlayerChanged;
         }
 
-        public async void SetUpBoardForChess()
+        public void SetUpBoardForChess()
         {
-            // cheat a frame to ensure the board is properly configured
-            await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
-
             if (CheckValidFen(DEFAULT_FEN))
             {
                 Pieces.Clear();
+                // wait for grid container to recalculate if necessary
+                //await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
                 SetUpPiecesFromFen(DEFAULT_FEN);
                 EmitSignal(SignalName.BoardReset);
-
-                if (game.User.Color == ChessColor.Black)
-                {
-                    Invert();
-                }
             }
         }
 
@@ -102,8 +97,9 @@ namespace BallmontGame.Core
                 else
                 {
                     var piece = packedPiece.Instantiate<Piece>();
-                    piece.InitializeFromFenChar(c, this);
-                    piece.SetAllToSquare(Squares[coord.X + coord.Y * Cols]);
+                    var square = Squares[coord.X + coord.Y * Cols];
+                    piece.InitializeFromFenChar(c, square);
+                    piece.SetAllToSquare(square);
                     Pieces.Add(piece);
                     coord.X += 1;
                 }
@@ -192,6 +188,7 @@ namespace BallmontGame.Core
             }
 
             isInverted = !isInverted;
+            RefreshTokenPositions();
         }
 
         public void RequestPieceMove(Piece piece, Square start, Square destination)
@@ -229,6 +226,8 @@ namespace BallmontGame.Core
             {
                 ShowActualPieces();
             }
+
+            RefreshTokenPositions();
         }
 
         private void ShowPlayerPieces()
@@ -294,6 +293,17 @@ namespace BallmontGame.Core
             squareTokenMap[piece.ServerToken.Square].Remove(piece.ServerToken);
             squareTokenMap[piece.UserToken.Square].Remove(piece.UserToken);
             squareTokenMap[piece.OppToken.Square].Remove(piece.OppToken);
+        }
+
+        private void RefreshTokenPositions()
+        {
+            foreach (var value in squareTokenMap.Values)
+            {
+                for (int i = 0; i < value.Count; i++)
+                {
+                    value[i].GlobalPosition = value[i].Square.GetGlobalCenter();
+                }
+            }
         }
     }
 }

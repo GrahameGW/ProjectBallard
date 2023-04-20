@@ -13,7 +13,6 @@ namespace BallmontGame.Core
         public readonly List<Command> Commands;
 
         private Game game;
-        private Board board;
 
 
         [Signal]
@@ -27,19 +26,9 @@ namespace BallmontGame.Core
             PeerId = peerId;
             Name = peerId == 0 ? $"{Enum.GetName(typeof(ChessColor), color)} Player" : peerId.ToString();
             game = instance;
-            board = game.Board;
-            board.BoardReset += OnBoardReset;
             Commands = new();
         }
 
-        private void OnBoardReset()
-        {
-            PieceData.Clear();
-            foreach (var piece in game.Board.Pieces)
-            {
-                PieceData[piece] = piece.Square;
-            }
-        }
 
         public Godot.Collections.Array<Command> CommandsAsGDArray()
         {

@@ -30,5 +30,29 @@ namespace BallmontGame.Core
 
             gameInstance.StartGame();
         }
+
+        [Rpc(CallLocal = true)]
+        public void StartMultiplayerGame(int serverColor)
+        {
+            GD.Print("Starting multiplayer game...");
+            var color = Multiplayer.IsServer() ? (ChessColor)serverColor : (ChessColor)(serverColor ^ 1);
+            GD.Print($"I am {color} | Server = {Multiplayer.IsServer()}");
+
+            gameInstance?.QueueFree();
+            gameInstance = packedGame.Instantiate<Game>();
+            AddChild(gameInstance);
+            gameInstance.Initialize(color, true);
+
+            foreach (var node in this.GetTypedChildren<CanvasLayer>())
+            {
+                node.Hide();
+            }
+
+            GetNode("DebugHUD").Call("show");
+            GetNode("DebugHUD/Visibility").Call("initialize", gameInstance);
+            GetNode("DebugHUD/UserOppControl").Call("initialize", gameInstance);
+
+            gameInstance.StartGame();
+        }
     }
 }

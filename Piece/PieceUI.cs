@@ -27,7 +27,7 @@ namespace BallmontGame.Core
         public void Initialize(Piece piece, TokenOwner owner)
         {
             Piece = piece;
-            Square = piece.Square;
+            Piece.Board.PreSortChildren += OnBoardRectChanged;
             OwnedBy = owner;
             sprite = GetNode<PieceSprite>("PieceSprite");
             sprite.Initialize(piece);
@@ -60,7 +60,7 @@ namespace BallmontGame.Core
             }
         }
 
-        private void OnSquareRectChanged()
+        private void OnBoardRectChanged()
         {
             GlobalPosition = Square.GetGlobalCenter();
         }
