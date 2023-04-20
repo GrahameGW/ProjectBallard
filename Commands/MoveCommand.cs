@@ -1,8 +1,9 @@
 ﻿using Godot;
+using Godot.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace BallmontGame.Core
+namespace ProjectBallard.Core
 {
     public partial class MoveCommand : Command
     {
@@ -10,6 +11,7 @@ namespace BallmontGame.Core
         public Square Start { get; private set; }
         public Square End { get; private set; }
 
+        public MoveCommand() { }
         public MoveCommand(Piece piece, Square start, Square end) 
         {
             Piece = piece;
@@ -20,6 +22,7 @@ namespace BallmontGame.Core
         private bool serverTravelComplete = false;
         private bool userTravelComplete = false;
 
+        [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
         public override void Dispatch()
         {
             GD.Print($"Dispatching move from {Start.Name} to {End.Name}");
@@ -155,6 +158,25 @@ namespace BallmontGame.Core
                 await ToSignal(Piece.GetTree(), SceneTree.SignalName.PhysicsFrame);
                 token = square.Board.GetTokenInSquare(square, owner);
             }
+        }
+
+        public override Godot.Collections.Dictionary<string, Variant> Serialize()
+        {
+            return new()
+            {
+                //{ "name", Name },
+                { "piece", Piece },
+                { "start", Start }, 
+                { "end", End },
+            };
+        }
+
+        public override void Deserialize(Godot.Collections.Dictionary<string, Variant> data)
+        {
+            //Name = (StringName)data["name"];
+            Piece = (Piece)data["piece"];
+            Start = (Square)data["start"];
+            End = (Square)data["end"];
         }
     }
 }

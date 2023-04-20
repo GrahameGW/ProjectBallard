@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System;
 
 
-namespace BallmontGame.Core
+namespace ProjectBallard.Core
 {
     public partial class Player : Node
     {
@@ -45,6 +45,39 @@ namespace BallmontGame.Core
         {
             var command = Commands.Pop();
             if (command == null) { return; }
+            if (game.IsMultiplayer)
+            {
+                SyncAndDispatchCommand(command);
+                //Rpc(nameof(command.Dispatch));
+            }
+            else
+            {
+                command.Dispatch();
+            }
+            EmitSignal(SignalName.DispatchedCommand, command);
+        }
+
+        private void SyncAndDispatchCommand(Command command)
+        {
+            var oppId = game.Opponent.PeerId;
+            var serde = command.Serialize();
+            var type = command switch
+            {
+                MoveCommand => "MOVE",
+                _ => throw new NotImplementedException()
+            };
+            Rpc("CreateRemoteCommand", serde, type);
+        }
+
+        [Rpc(MultiplayerApi.RpcMode.AnyPeer)]
+        private void CreateRemoteCommand(Godot.Collections.Dictionary<string, Variant> parameters, string typeString)
+        {
+            var command = typeString switch
+            {
+                "MOVE" => new MoveCommand(),
+                _ => throw new NotImplementedException()
+            };
+            command.Deserialize(parameters);
             command.Dispatch();
             EmitSignal(SignalName.DispatchedCommand, command);
         }

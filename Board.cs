@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace BallmontGame.Core
+namespace ProjectBallard.Core
 {
     public partial class Board : AspectRatioContainer
     {

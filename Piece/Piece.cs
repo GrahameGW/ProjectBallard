@@ -1,7 +1,7 @@
 ﻿using Godot;
 using System.Collections.Generic;
 
-namespace BallmontGame.Core
+namespace ProjectBallard.Core
 {
     public partial class Piece : Node2D
     {

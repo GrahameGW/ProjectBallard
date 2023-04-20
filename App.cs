@@ -1,6 +1,6 @@
 using Godot;
 
-namespace BallmontGame.Core
+namespace ProjectBallard.Core
 {
     public partial class App : Node
     {

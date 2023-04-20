@@ -1,4 +1,4 @@
-﻿namespace BallmontGame.Core
+﻿namespace ProjectBallard.Core
 {
     public enum ChessColor
     {
