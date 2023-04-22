@@ -98,6 +98,7 @@ namespace ProjectBallard.Core
                     else
                     {
                         GD.Print($"{nextPiece.Name} isn't in Square {nextPiece.Square.Name}");
+                        userTravelComplete = true; // should stop travel
                     }
                 }
 
